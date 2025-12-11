@@ -24,15 +24,27 @@ public class PathFinder {
 
         // 1. INITIALIZATION
         // TODO: Initialize distances array with Integer.MAX_VALUE for all nodes
+        int[] distances = new int[Graph.NUM_NODES];
+        Arrays.fill(distances, Integer.MAX_VALUE);
+
         // TODO: Initialize previous array with -1 for all nodes
+        int[] previous = new int[Graph.NUM_NODES];
+        Arrays.fill(previous, -1);
+
         // TODO: Initialize visited set
+        HashSet<Integer> visited = new HashSet<>();
+
         // TODO: Set distance to start node as 0
+        distances[0] = 0;
+
 
         // TODO: Create a PriorityQueue of NodeDistance objects
         // The PriorityQueue should order by distance (smallest first)
         // Hint: Use a Comparator or make NodeDistance implement Comparable
+        PriorityQueue<NodeDistance> priorityQueue = new PriorityQueue<>();
 
         // TODO: Add the starting node to the priority queue with distance 0
+        priorityQueue.add();
 
         // 2. MAIN LOOP
         // TODO: While the priority queue is not empty...
@@ -64,6 +76,13 @@ public class PathFinder {
         return result;
     }
 
+
+    //Helper Method - getMinDistanceNode()
+    //Loop through all nodes. You are looking for a node that is NOT visited, but has the lowest value in your distances array.
+    //private ... getMinDistanceNode();
+
+
+
     /**
      * Helper method to reconstruct the path from start to end.
      *
@@ -83,7 +102,8 @@ public class PathFinder {
      * Inner class to represent a node and its distance in the priority queue.
      * Students must implement Comparable to allow PriorityQueue ordering.
      */
-    private static class NodeDistance implements Comparable {
+    private static abstract class NodeDistance implements Comparable
+    {
         int nodeIndex;
         int distance;
 
@@ -92,11 +112,35 @@ public class PathFinder {
             this.distance = distance;
         }
 
-        @Override
+        public int getNodeIndex() {
+            return nodeIndex;
+        }
+
+        public void setNodeIndex(int nodeIndex) {
+            this.nodeIndex = nodeIndex;
+        }
+
+        public int getDistance() {
+            return distance;
+        }
+
+        public void setDistance(int distance) {
+            this.distance = distance;
+        }
+
+        //@Override
         public int compareTo(NodeDistance other) {
             // TODO: Compare based on distance
             // Return negative if this distance < other distance
+            if( < other.getDistance())
+            {
+                return -1;
+            }
             // Return positive if this distance > other distance
+            if( > other.getDistance())
+            {
+                return 1;
+            }
             // Return 0 if equal
             return 0;
         }
