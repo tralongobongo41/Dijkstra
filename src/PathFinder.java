@@ -122,9 +122,12 @@ public class PathFinder {
 
         int currentIndex = endIndex;
 
-        while(previous[currentIndex] != -1)
+        while(currentIndex != -1)
         {
-            path.add(graph.getNodeName(currentIndex));
+            path.add(currentIndex);
+            if(currentIndex != startIndex)
+                break;
+            currentIndex = previous[currentIndex];
         }
 
         // TODO: Don't forget to reverse the list so it goes Start -> End!
