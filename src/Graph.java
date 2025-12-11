@@ -119,6 +119,8 @@ public class Graph {
      */
     public boolean hasEdge(int fromIndex, int toIndex) {
         // TODO: Check if weight > 0
+        if(edgeWeights[fromIndex][toIndex] > 0)
+            return true;
         return false;
     }
 
