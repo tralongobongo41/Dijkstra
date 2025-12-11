@@ -32,10 +32,10 @@ public class PathFinder {
         Arrays.fill(previous, -1);
 
         // TODO: Initialize visited set
-        HashSet<Integer> visited = new HashSet<>();
+        Set<Integer> visited = new HashSet<>();
 
         // TODO: Set distance to start node as 0
-        distances[0] = 0;
+        distances[startIndex] = 0;
 
 
         // TODO: Create a PriorityQueue of NodeDistance objects
@@ -44,42 +44,67 @@ public class PathFinder {
         PriorityQueue<NodeDistance> priorityQueue = new PriorityQueue<>();
 
         // TODO: Add the starting node to the priority queue with distance 0
-        priorityQueue.add();
+        priorityQueue.add(new NodeDistance(startIndex, 0));
 
         // 2. MAIN LOOP
         // TODO: While the priority queue is not empty...
+        while(!priorityQueue.isEmpty()) {
+            // a. Poll the node with smallest distance from the priority queue
+            int current = priorityQueue.poll().getNodeIndex();
 
-        // a. Poll the node with smallest distance from the priority queue
+            // b. If this node has already been visited, skip it (continue)
+            if(!visited.contains(current))
+            {
+                // c. If this node is the endIndex, we've found the shortest path - stop.
+                if(!(current == endIndex))
+                {
+                    // d. Mark current node as visited
+                    visited.add(current);
 
-        // b. If this node has already been visited, skip it (continue)
+                    // e. VITAL: Record the step for the visualizer!
+                    result.addStep(current, visited, distances, previous);
 
-        // c. If this node is the endIndex, we've found the shortest path - stop.
+                    // f. Iterate through all neighbors of the current node
 
-        // d. Mark current node as visited
+                    List<Integer> neighbors = graph.getNeighbors(current);
+                    int newDistance;
 
-        // e. VITAL: Record the step for the visualizer!
-        // result.addStep(current, visited, distances, previous);
+                    // For each neighbor:
+                    for(int neighbor: neighbors)
+                    {
+                        // - Calculate new distance: distances[current] + edge weight
+                        newDistance = distances[current] + graph.getEdgeWeight(current, neighbor);
 
-        // f. Iterate through all neighbors of the current node
+                        // - If new distance < distances[neighbor]:
+                        if(newDistance < distances[neighbor])
+                        {
+                            //     * Update distances[neighbor]
+                            //     * Update previous[neighbor] = current
+                            //     * Add neighbor to priority queue with new distance
 
-        // For each neighbor:
-        // - Calculate new distance: distances[current] + edge weight
-        // - If new distance < distances[neighbor]:
-        //     * Update distances[neighbor]
-        //     * Update previous[neighbor] = current
-        //     * Add neighbor to priority queue with new distance
+                            distances[neighbor] = newDistance;
+                            previous[neighbor] = current;
+                            priorityQueue.add(new NodeDistance(neighbor, newDistance));
+                        }
+                    }
+                }
+            }
+        }
+
 
         // 3. RECONSTRUCT PATH
         // TODO: Call helper method to get the path list
         // TODO: result.setFinalPath(path, distances[endIndex]);
 
+        List path = reconstructPath(previous, startIndex, endIndex);
+
+        result.setFinalPath(path, distances[endIndex]);
+
         return result;
     }
 
 
-    //Helper Method - getMinDistanceNode()
-    //Loop through all nodes. You are looking for a node that is NOT visited, but has the lowest value in your distances array.
-    //private ... getMinDistanceNode();
+    //Didn't do helper method
 
 
 
@@ -94,7 +119,17 @@ public class PathFinder {
     private List reconstructPath(int[] previous, int startIndex, int endIndex) {
         List path = new ArrayList<>();
         // TODO: Trace backwards from endIndex using the previous[] array
+
+        int currentIndex = endIndex;
+
+        while(previous[currentIndex] != -1)
+        {
+            path.add(graph.getNodeName(currentIndex));
+        }
+
         // TODO: Don't forget to reverse the list so it goes Start -> End!
+        Collections.reverse(path);
+
         return path;
     }
 
@@ -102,7 +137,7 @@ public class PathFinder {
      * Inner class to represent a node and its distance in the priority queue.
      * Students must implement Comparable to allow PriorityQueue ordering.
      */
-    private static abstract class NodeDistance implements Comparable
+    private static class NodeDistance implements Comparable<NodeDistance>
     {
         int nodeIndex;
         int distance;
@@ -128,16 +163,17 @@ public class PathFinder {
             this.distance = distance;
         }
 
-        //@Override
+
+        @Override
         public int compareTo(NodeDistance other) {
             // TODO: Compare based on distance
             // Return negative if this distance < other distance
-            if( < other.getDistance())
+            if(this.distance < other.getDistance())
             {
                 return -1;
             }
             // Return positive if this distance > other distance
-            if( > other.getDistance())
+            if(this.distance > other.getDistance())
             {
                 return 1;
             }
