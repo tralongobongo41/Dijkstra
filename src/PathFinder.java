@@ -125,7 +125,7 @@ public class PathFinder {
         while(currentIndex != -1)
         {
             path.add(currentIndex);
-            if(currentIndex != startIndex)
+            if(currentIndex == startIndex)
                 break;
             currentIndex = previous[currentIndex];
         }
